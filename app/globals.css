@@ -1,26 +1,131 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer theme {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Gourmet Patisserie & Food Color Palette */
+    --chocolate-950: #1A0D08;
+    --chocolate-900: #2C1810;
+    --chocolate-800: #3E2014;
+    --chocolate-700: #542D1C;
+    --chocolate-600: #6B3C26;
+
+    --caramel-600: #A85D22;
+    --caramel-500: #C27838;
+    --caramel-400: #DE9E62;
+    --caramel-300: #E9B889;
+    --caramel-100: #FBF1E6;
+
+    --cream-50: #FFFDF9;
+    --cream-100: #FAF6F0;
+    --cream-200: #F5ECE1;
+    --cream-300: #EADBC8;
+    --cream-400: #DEC7AD;
+
+    /* Legacy sage alias mapped to warm bakery theme */
+    --sage-50: #FAF6F0;
+    --sage-100: #F5ECE1;
+    --sage-200: #EADBC8;
+    --sage-300: #DEC7AD;
+    --sage-400: #DE9E62;
+    --sage-500: #C27838;
+    --sage-600: #A85D22;
+    --sage-700: #6B3C26;
+    --sage-800: #3E2014;
+    --sage-900: #2C1810;
+
+    --espresso-900: #2C1810;
+    --espresso-950: #1A0D08;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  --color-chocolate-950: #1A0D08;
+  --color-chocolate-900: #2C1810;
+  --color-chocolate-800: #3E2014;
+  --color-chocolate-700: #542D1C;
+  --color-chocolate-600: #6B3C26;
+
+  --color-caramel-600: #A85D22;
+  --color-caramel-500: #C27838;
+  --color-caramel-400: #DE9E62;
+  --color-caramel-300: #E9B889;
+  --color-caramel-100: #FBF1E6;
+
+  --color-cream-50: #FFFDF9;
+  --color-cream-100: #FAF6F0;
+  --color-cream-200: #F5ECE1;
+  --color-cream-300: #EADBC8;
+
+  --color-sage-50: #FAF6F0;
+  --color-sage-100: #F5ECE1;
+  --color-sage-200: #EADBC8;
+  --color-sage-300: #DEC7AD;
+  --color-sage-400: #DE9E62;
+  --color-sage-500: #C27838;
+  --color-sage-600: #A85D22;
+  --color-sage-700: #6B3C26;
+  --color-sage-800: #3E2014;
+  --color-sage-900: #2C1810;
+
+  --color-espresso-800: #3E2014;
+  --color-espresso-900: #2C1810;
+  --color-espresso-950: #1A0D08;
+
+  --font-serif: var(--font-serif), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-sans), "Plus Jakarta Sans", sans-serif;
 }
+
+body {
+  background-color: #FAF6F0;
+  color: #2C1810;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch manipulation optimization */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Hide scrollbar while preserving momentum scroll */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F5ECE1;
+}
+::-webkit-scrollbar-thumb {
+  background: #C27838;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A85D22;
+}
+
+/* Smooth glass effect */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(194, 120, 56, 0.18);
+}
+
+.glass-dark {
+  background: rgba(44, 24, 16, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(222, 158, 98, 0.2);
+}
+
