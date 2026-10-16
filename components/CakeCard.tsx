@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Plus, Check } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import { CakeProduct } from '../lib/types';
-import { useCart } from '../lib/cart-context';
 
 interface CakeCardProps {
   cake: CakeProduct;
@@ -13,36 +12,49 @@ interface CakeCardProps {
 }
 
 export function CakeCard({ cake }: CakeCardProps) {
-  const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-  const handleQuickAdd = (e: React.MouseEvent) => {
+  // Sync wishlist from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('bakeistry_wishlist');
+      if (saved) {
+        const list = JSON.parse(saved);
+        if (Array.isArray(list) && list.includes(cake.id)) {
+          setIsFavorite(true);
+        }
+      }
+    } catch {
+      // LocalStorage not available
+    }
+  }, [cake.id]);
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem({
-      type: 'cake',
-      productId: cake.id,
-      slug: cake.slug,
-      title: cake.name,
-      image: cake.images[0],
-      unitPrice: cake.price,
-      quantity: 1,
-      weight: cake.weights[0]?.value || '0.5kg',
-      flavor: cake.flavors[0]?.name || 'Signature',
-      isEggless: cake.isEggless,
-      customMessage: 'Best Wishes',
-      deliveryDate: 'Today',
-      deliverySlot: '06:00 PM - 09:00 PM',
-    });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1400);
+    try {
+      const saved = localStorage.getItem('bakeistry_wishlist');
+      let list: string[] = saved ? JSON.parse(saved) : [];
+      if (!Array.isArray(list)) list = [];
+
+      if (isFavorite) {
+        list = list.filter((id) => id !== cake.id);
+        setIsFavorite(false);
+      } else {
+        list.push(cake.id);
+        setIsFavorite(true);
+      }
+      localStorage.setItem('bakeistry_wishlist', JSON.stringify(list));
+    } catch {
+      setIsFavorite(!isFavorite);
+    }
   };
 
   return (
-    <div className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-[#E8DEC8] hover:border-[#C27838] transition-all duration-200 hover:shadow-md">
-      {/* Image Container */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#FAF6F0]">
-        <Link href={`/cakes/${cake.slug}`} className="block w-full h-full">
+    <div className="group flex flex-col cursor-pointer transition-transform duration-200">
+      {/* 1. Rounded Image - Clean & Standalone (No Enclosing Box) */}
+      <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#FAF7F2] shadow-2xs">
+        <Link href={`/cakes/${cake.slug}`} className="block w-full h-full relative">
           <Image
             src={cake.images[0]}
             alt={cake.name}
@@ -52,78 +64,68 @@ export function CakeCard({ cake }: CakeCardProps) {
           />
         </Link>
 
-        {/* Top Badges: Eggless Green Dot / Veg mark & Bestseller */}
-        <div className="absolute top-2 left-2 flex items-center gap-1.5 z-10">
-          {cake.isEggless && (
-            <span
-              className="w-4 h-4 rounded-xs border border-[#15803D] bg-white flex items-center justify-center p-0.5 shadow-2xs"
-              title="100% Pure Vegetarian / Eggless"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#15803D]" />
-            </span>
-          )}
-          {cake.isBestseller && (
-            <span className="bg-[#2C1810] text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
-              Bestseller
-            </span>
-          )}
-        </div>
-
-        {/* Rating chip on bottom-left of image (Bakingo style) */}
-        <div className="absolute bottom-2 left-2 bg-white/95 backdrop-blur-xs px-1.5 py-0.5 rounded-md flex items-center gap-0.5 text-[10px] font-bold text-[#2C1810] shadow-2xs border border-[#E8DEC8]/50">
-          <span>{cake.rating}</span>
-          <Star className="w-2.5 h-2.5 text-[#F59E0B] fill-current" />
-        </div>
+        {/* Tiny Pure Veg Green Mark (Bakingo hallmark at top-left) */}
+        {cake.isEggless && (
+          <div
+            className="absolute top-2 left-2 z-10 w-3.5 h-3.5 rounded-[2px] border border-[#15803D] bg-white flex items-center justify-center p-[2px] shadow-xs pointer-events-none"
+            title="100% Pure Vegetarian / Eggless"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-[#15803D]" />
+          </div>
+        )}
       </div>
 
-      {/* Details - Minimal */}
-      <div className="p-3 flex-1 flex flex-col justify-between">
-        <div>
-          <Link href={`/cakes/${cake.slug}`}>
-            <h3 className="font-serif font-bold text-xs sm:text-sm text-[#2C1810] line-clamp-1 group-hover:text-[#C27838] transition-colors">
-              {cake.name}
-            </h3>
-          </Link>
-          <p className="text-[10px] text-[#15803D] font-semibold mt-0.5 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#15803D] animate-pulse" />
-            <span>Today in 2-3 hrs</span>
-          </p>
-        </div>
+      {/* 2. Product Details - Flowing Freely Below (Bakingo Minimalist Style) */}
+      <div className="pt-2 px-0.5 space-y-1">
+        {/* Title */}
+        <Link href={`/cakes/${cake.slug}`} className="block">
+          <h3
+            title={cake.name}
+            className="text-xs sm:text-[13px] font-medium text-neutral-800 line-clamp-1 group-hover:text-[#E23744] transition-colors leading-tight"
+          >
+            {cake.name}
+          </h3>
+        </Link>
 
-        {/* Price & Add Button */}
-        <div className="pt-2 mt-2 border-t border-[#F5ECE1] flex items-center justify-between">
-          <div className="flex items-baseline gap-1">
-            <span className="font-serif font-bold text-sm sm:text-base text-[#2C1810]">
+        {/* Price & Wishlist Row */}
+        <div className="flex items-center justify-between pt-0.5">
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-bold text-xs sm:text-sm text-neutral-900">
               ₹{cake.price.toLocaleString('en-IN')}
             </span>
             {cake.originalPrice && (
-              <span className="text-[10px] text-[#8A796F] line-through">
+              <span className="text-[10px] sm:text-[11px] text-neutral-400 line-through">
                 ₹{cake.originalPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>
 
+          {/* Wishlist Heart Icon */}
           <button
-            onClick={handleQuickAdd}
-            className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 shadow-2xs active:scale-95 ${
-              added
-                ? 'bg-[#15803D] text-white'
-                : 'bg-[#FAF6F0] hover:bg-[#2C1810] text-[#2C1810] hover:text-white border border-[#E8DEC8]'
-            }`}
+            onClick={handleToggleWishlist}
+            aria-label={isFavorite ? 'Remove from wishlist' : 'Add to wishlist'}
+            className="p-1 -mr-1 text-neutral-400 hover:text-red-500 hover:scale-115 active:scale-90 transition-all focus:outline-none"
           >
-            {added ? (
-              <>
-                <Check className="w-3 h-3 stroke-[3]" />
-                <span>Added</span>
-              </>
-            ) : (
-              <>
-                <Plus className="w-3 h-3" />
-                <span>Add</span>
-              </>
-            )}
+            <Heart
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
+                isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-400'
+              }`}
+            />
           </button>
         </div>
+
+        {/* Rating Line: 4.9 ★ (245 Reviews) */}
+        <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-neutral-500">
+          <span className="font-semibold text-neutral-700">{cake.rating.toFixed(1)}</span>
+          <Star className="w-3 h-3 text-[#F59E0B] fill-[#F59E0B]" />
+          <span>({cake.reviewCount || 120} Reviews)</span>
+        </div>
+
+        {/* Earliest Delivery Line */}
+        <p className="text-[10px] sm:text-[11px] text-neutral-500 truncate">
+          <span>Earliest Delivery: </span>
+          <span className="text-[#E23744] font-medium">In 2 hours</span>
+        </p>
       </div>
     </div>
   );

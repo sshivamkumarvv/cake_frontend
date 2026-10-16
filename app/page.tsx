@@ -27,8 +27,8 @@ export default function HomePage() {
   const categoryTiles = [
     {
       id: 'Celebration Cakes',
-      name: 'Celebration Cakes',
-      icon: '🎂',
+      name: 'Celebration',
+      image: '/images/cakes/pistachio-raspberry.jpg',
       subtitle: 'Birthdays & Parties',
       count: CAKE_PRODUCTS.filter((c) => c.category === 'Celebration Cakes').length,
       href: '/cakes?category=Celebration%20Cakes',
@@ -36,7 +36,7 @@ export default function HomePage() {
     {
       id: 'Chocolate Decadence',
       name: 'Chocolaterie',
-      icon: '🍫',
+      image: '/images/cakes/belgian-truffle.jpg',
       subtitle: '70% Dark Ganache',
       count: CAKE_PRODUCTS.filter((c) => c.category === 'Chocolate Decadence').length,
       href: '/cakes?category=Chocolate%20Decadence',
@@ -44,15 +44,23 @@ export default function HomePage() {
     {
       id: 'Eggless Collection',
       name: '100% Eggless',
-      icon: '🌱',
+      image: '/images/cakes/eggless-fudge.jpg',
       subtitle: 'Zero Gelatin Veg',
       count: CAKE_PRODUCTS.filter((c) => c.isEggless).length,
       href: '/cakes?category=Eggless%20Collection',
     },
     {
+      id: 'Birthday Cakes',
+      name: 'Birthday',
+      image: '/images/cakes/french-vanilla-berry.jpg',
+      subtitle: 'Classic Sponges',
+      count: CAKE_PRODUCTS.filter((c) => c.category === 'Birthday Cakes').length,
+      href: '/cakes?category=Birthday%20Cakes',
+    },
+    {
       id: 'Custom & Wedding',
-      name: 'Tiered & Custom',
-      icon: '👑',
+      name: 'Custom & Tiers',
+      image: '/images/cakes/vintage-lambeth.jpg',
       subtitle: 'Weddings & Tiers',
       count: CAKE_PRODUCTS.filter((c) => c.category === 'Custom & Wedding').length,
       href: '/cakes?category=Custom%20%26%20Wedding',
@@ -60,18 +68,10 @@ export default function HomePage() {
     {
       id: 'Bestsellers',
       name: 'Bestsellers',
-      icon: '⭐',
+      image: '/images/cakes/salted-caramel-biscoff.jpg',
       subtitle: 'Chef Signatures',
       count: CAKE_PRODUCTS.filter((c) => c.isBestseller).length,
       href: '/cakes?category=Bestsellers',
-    },
-    {
-      id: 'All',
-      name: 'All Cakes',
-      icon: '✨',
-      subtitle: 'Full Collection',
-      count: CAKE_PRODUCTS.length,
-      href: '/cakes',
     },
   ];
 
@@ -199,63 +199,70 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 4. VISUAL CATEGORIES SECTION (Clicking navigates to Category Page) */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between px-0.5">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-[#C27838]">
-            Explore by Category &amp; Occasion
+      {/* 4. BAKINGO-STYLE MENU SECTION (Screenshot 1 Inspired) */}
+      <div className="space-y-4 pt-3">
+        <div className="text-center space-y-0.5">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#E23744] tracking-tight">
+            Menu
           </h2>
-          <Link href="/cakes" className="text-[11px] text-[#A85D22] hover:underline font-semibold flex items-center gap-0.5">
-            <span>View All ({CAKE_PRODUCTS.length})</span>
-            <ChevronRight className="w-3 h-3" />
-          </Link>
+          <p className="text-xs sm:text-sm text-neutral-600 font-normal">
+            What will you wish for?
+          </p>
         </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+        {/* Category cards row (Image 1 layout) */}
+        <div className="flex items-start justify-start md:justify-center gap-3 sm:gap-5 overflow-x-auto scrollbar-none py-2 px-1 -mx-3.5 px-3.5 sm:mx-0">
           {categoryTiles.map((cat) => (
             <Link
               key={cat.id}
               href={cat.href}
-              className="bg-white hover:bg-[#FAF6F0] p-3 rounded-2xl border border-[#E8DEC8] hover:border-[#C27838] transition-all flex flex-col items-center text-center group shadow-2xs active:scale-95"
+              className="flex flex-col items-center shrink-0 group focus:outline-none cursor-pointer"
             >
-              <div className="w-12 h-12 rounded-xl bg-[#FAF6F0] group-hover:bg-[#F5ECE1] flex items-center justify-center text-2xl transition-colors mb-1.5 border border-[#E8DEC8]">
-                {cat.icon}
+              {/* Tall Rounded Rectangular Card */}
+              <div className="relative w-28 sm:w-36 md:w-40 aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-200/80 group-hover:border-[#E23744] transition-all duration-300 group-hover:scale-104 shadow-xs bg-[#FAF7F2]">
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  sizes="(max-width: 640px) 112px, 160px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
               </div>
-              <span className="font-serif font-bold text-xs text-[#2C1810] group-hover:text-[#C27838] leading-tight">
+
+              {/* Bold Uppercase Category Name Below */}
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-neutral-800 group-hover:text-[#E23744] transition-colors text-center whitespace-nowrap mt-2">
                 {cat.name}
-              </span>
-              <span className="text-[10px] text-[#8A796F] mt-0.5 leading-tight">
-                {cat.count} Cakes
               </span>
             </Link>
           ))}
         </div>
       </div>
 
-      {/* 5. SHOWCASE: TRENDING BESTSELLERS (Minimal Cards) */}
-      <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between px-0.5">
-          <div>
-            <h2 className="font-serif font-bold text-base sm:text-xl text-[#2C1810]">
-              Trending Bestsellers
-            </h2>
-            <p className="text-[11px] text-[#8A796F]">
-              Most loved celebratory gateaux for immediate delivery
-            </p>
+      {/* 5. BAKINGO-STYLE: INDIA LOVES / BESTSELLERS */}
+      <div className="space-y-3 pt-4">
+        <div className="text-center space-y-0.5">
+          <div className="inline-flex items-center gap-1.5 text-base sm:text-lg font-bold text-[#E23744]">
+            <Sparkles className="w-4 h-4 fill-current" />
+            <span>India Loves</span>
           </div>
-          <Link
-            href="/cakes?category=Bestsellers"
-            className="text-xs font-bold text-[#A85D22] hover:underline flex items-center gap-1"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <p className="text-xs text-neutral-500">
+            Bestsellers from across our kitchen
+          </p>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {bestsellers.map((cake) => (
             <CakeCard key={cake.id} cake={cake} />
           ))}
+        </div>
+
+        <div className="text-center pt-2">
+          <Link
+            href="/cakes?category=Bestsellers"
+            className="inline-block text-xs font-bold text-[#E23744] hover:underline uppercase tracking-wider"
+          >
+            VIEW ALL &rarr;
+          </Link>
         </div>
       </div>
 
